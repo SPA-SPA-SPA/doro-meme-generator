@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>快做啊! - doro表情包生成器</title>
+    <link rel="stylesheet" href="vendor/cropper/cropper.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- 顶部栏 -->
+<div class="top-bar">
+    <div class="top-bar-inner">
+        <div class="top-bar-left">
+            <h1 class="page-title" data-i18n="title">快做啊!</h1>
+        </div>
+        <div class="top-bar-right">
+            <button class="icon-btn" id="langBtn">EN</button>
+            <button class="icon-btn" id="darkModeBtn" title="Dark Mode">
+                <svg class="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="5"/>
+                    <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+                </svg>
+                <svg class="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none;">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="app-container">
+    <!-- 左侧预览区 -->
+    <div class="left-panel">
+        <div class="preview-area">
+            <div class="preview-container">
+                <canvas id="previewCanvas" width="500" height="500"></canvas>
+            </div>
+            <div class="preview-tip" data-i18n="preview_tip">提示：可直接在预览图上拖动头像调整位置</div>
+        </div>
+    </div>
+
+    <!-- 右侧控制区 -->
+    <div class="right-panel">
+        <div class="controls-area">
+
+            <!-- 区块一：头像 -->
+            <div class="section">
+                <div class="section-title" data-i18n="section_avatar">头像</div>
+                <input type="file" id="avatarInput" accept="image/png,image/jpeg,image/webp" style="display:none;">
+                <div class="avatar-upload" id="avatarUploadArea">
+                    <span class="upload-icon">+</span>
+                    <span class="upload-text" data-i18n="avatar_upload_hint">点击或拖拽上传头像</span>
+                    <span class="upload-hint" data-i18n="avatar_upload_formats">支持 JPG、PNG 格式</span>
+                </div>
+                <div class="avatar-thumb" id="avatarThumb" style="display:none;">
+                    <img id="avatarThumbImg" src="" alt="avatar">
+                    <div class="avatar-actions">
+                        <span class="avatar-action-btn" id="avatarRecropBtn" data-i18n="avatar_recrop">重新裁剪</span>
+                        <span class="avatar-action-divider">|</span>
+                        <span class="avatar-action-btn" id="avatarReplaceBtn" data-i18n="avatar_replace">更换头像</span>
+                    </div>
+                </div>
+
+                <!-- 折叠：头像微调 -->
+                <div class="expandable-section" style="margin-top: 12px;">
+                    <div class="expandable-header" id="avatarTuneHeader">
+                        <span data-i18n="label_avatar_tune">头像位置</span>
+                        <span class="expand-arrow">&#9654;</span>
+                    </div>
+                    <div class="expandable-body" id="avatarTuneBody" style="display:none;">
+                        <span class="section-label" data-i18n="label_text_x">左右</span>
+                        <div class="row">
+                            <input type="range" id="avatarX" min="0" max="500" value="438">
+                            <span class="val" id="avatarXVal">438</span>
+                        </div>
+                        <span class="section-label" data-i18n="label_text_y">上下</span>
+                        <div class="row">
+                            <input type="range" id="avatarY" min="0" max="500" value="380">
+                            <span class="val" id="avatarYVal">380</span>
+                        </div>
+                        <span class="section-label" data-i18n="label_avatar_size">大小</span>
+                        <div class="row">
+                            <input type="range" id="avatarSize" min="20" max="260" value="120">
+                            <span class="val" id="avatarSizeVal">120</span>
+                        </div>
+                        <div class="row fx-row">
+                            <label class="fx-label">
+                                <input type="checkbox" id="avatarFx" checked>
+                                <span data-i18n="label_avatar_fx">旋转 + 弹跳动效</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 区块二：文字 -->
+            <div class="section">
+                <div class="section-title" data-i18n="section_text">文字</div>
+                <input type="text" id="textContent" value="快做啊！" data-i18n="placeholder_text" placeholder="输入文字...">
+                <div class="row" style="margin-top: 10px;">
+                    <span class="section-label" style="margin-bottom:0; white-space:nowrap;" data-i18n="label_text_size">字号</span>
+                    <input type="range" id="textSize" min="10" max="100" value="52">
+                    <span class="val" id="textSizeVal">52</span>
+                </div>
+
+                <!-- 折叠：位置微调 -->
+                <div class="expandable-section">
+                    <div class="expandable-header" id="textTuneHeader">
+                        <span data-i18n="label_fine_tune">微调位置</span>
+                        <span class="expand-arrow">&#9654;</span>
+                    </div>
+                    <div class="expandable-body" id="textTuneBody" style="display:none;">
+                        <span class="section-label" data-i18n="label_text_x">左右</span>
+                        <div class="row">
+                            <input type="range" id="textX" min="0" max="500" value="250">
+                            <span class="val" id="textXVal">250</span>
+                        </div>
+                        <span class="section-label" data-i18n="label_text_y">上下</span>
+                        <div class="row">
+                            <input type="range" id="textY" min="0" max="500" value="462">
+                            <span class="val" id="textYVal">462</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 区块三：速度 -->
+            <div class="section">
+                <div class="section-title" data-i18n="section_speed">速度</div>
+                <div class="row">
+                    <input type="range" id="speed" min="0.5" max="3.0" step="0.1" value="1.0">
+                    <span class="val" id="speedVal">1.0</span>
+                </div>
+            </div>
+
+            <!-- 区块四：导出 -->
+            <div class="section export-section">
+                <div class="section-title" data-i18n="section_export">导出</div>
+                <div class="export-btns">
+                    <button class="export-btn primary" id="exportGifBtn" data-i18n="btn_export_gif">导出 GIF</button>
+                </div>
+                <div class="export-status" id="exportStatus"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 裁剪弹窗 -->
+<div class="crop-modal" id="cropModal">
+    <div class="crop-dialog">
+        <h3 data-i18n="crop_title">裁剪头像</h3>
+        <div class="crop-container">
+            <img id="cropImage" src="" alt="crop">
+        </div>
+        <div class="crop-actions">
+            <button id="cropCancel" data-i18n="crop_cancel">取消</button>
+            <button id="cropConfirm" data-i18n="crop_confirm">确认</button>
+        </div>
+    </div>
+</div>
+
+<script src="vendor/cropper/cropper.min.js"></script>
+<script src="js/doro-data.js"></script>
+<script src="js/gif-parser.js"></script>
+<script src="js/gif-encoder.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

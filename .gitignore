@@ -1,0 +1,6 @@
+# 白名单模式：默认忽略根目录下所有内容，仅发布成品系统
+/*
+!/.gitignore
+!/.github
+!/02-system
+!/README.md
