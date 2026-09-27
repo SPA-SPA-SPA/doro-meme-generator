@@ -142,9 +142,9 @@
 
     var EXPORT_SIZE = 512;
 
-    // 头像淡蓝色描边
-    var AVATAR_BORDER_COLOR = '#8ecdf2';
-    var AVATAR_BORDER_RATIO = 0.05; // 描边厚度 = 头像直径的 5%
+    // 头像淡青色描边
+    var AVATAR_BORDER_COLOR = '#8DD9D2';
+    var AVATAR_BORDER_RATIO = 0.03; // 描边厚度 = 头像直径的 3%
 
     // ===== Y轴旋转 + 弹跳效果 =====
     function computeBounce(t, peakAt, riseTime, hangTime, fallTime) {
