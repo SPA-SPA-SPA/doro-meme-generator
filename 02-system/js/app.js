@@ -142,6 +142,10 @@
 
     var EXPORT_SIZE = 512;
 
+    // 头像淡蓝色描边
+    var AVATAR_BORDER_COLOR = '#8ecdf2';
+    var AVATAR_BORDER_RATIO = 0.05; // 描边厚度 = 头像直径的 5%
+
     // ===== Y轴旋转 + 弹跳效果 =====
     function computeBounce(t, peakAt, riseTime, hangTime, fallTime) {
         var dt = t - peakAt;
@@ -231,12 +235,28 @@
             ctx.translate(cx, cy + bounceOffset);
             ctx.scale(scaleX, 1);
 
+            // 头像本体裁剪进内圆（外圈留给描边）
+            var border = size * AVATAR_BORDER_RATIO;
+            var rInner = radius - border;
+
             ctx.beginPath();
-            ctx.arc(0, 0, radius, 0, Math.PI * 2);
+            ctx.arc(0, 0, rInner, 0, Math.PI * 2);
             ctx.closePath();
             ctx.clip();
 
-            ctx.drawImage(state.avatarCanvas, -radius, -radius, size, size);
+            ctx.drawImage(state.avatarCanvas, -rInner, -rInner, rInner * 2, rInner * 2);
+            ctx.restore();
+
+            // 淡蓝色圆圈描边（与头像同变换，翻转时作为“硬币边缘”一起压扁）
+            ctx.save();
+            ctx.translate(cx, cy + bounceOffset);
+            ctx.scale(scaleX, 1);
+            ctx.beginPath();
+            ctx.arc(0, 0, radius - border / 2, 0, Math.PI * 2);
+            ctx.closePath();
+            ctx.lineWidth = border;
+            ctx.strokeStyle = AVATAR_BORDER_COLOR;
+            ctx.stroke();
             ctx.restore();
         }
 
